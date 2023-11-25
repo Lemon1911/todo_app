@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/layout/bottom_sheet_widget.dart';
 
 import '../moduls/home_screen/home_screen.dart';
 import '../moduls/settings_screen/settings_screen.dart';
@@ -32,10 +33,7 @@ class _HomeLayoutState extends State<HomeLayout> {
             onPressed: () {},
             child: InkWell(
               onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Container(),
-                );
+                showAddTaskBottomSheet();
               },
               child: const Icon(
                 Icons.add,
@@ -77,6 +75,18 @@ class _HomeLayoutState extends State<HomeLayout> {
           ],
         ),
       ),
+    );
+  }
+
+  void showAddTaskBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(25),
+        topRight: Radius.circular(25),
+      )),
+      builder: (context) => BottomSheetWidget(),
     );
   }
 }

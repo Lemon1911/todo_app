@@ -30,16 +30,13 @@ class _HomeLayoutState extends State<HomeLayout> {
         decoration:
             const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
         child: FloatingActionButton(
-            onPressed: () {},
-            child: InkWell(
-              onTap: () {
-                showAddTaskBottomSheet();
-              },
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 28,
-              ),
+            onPressed: () {
+              showAddTaskBottomSheet();
+            },
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 28,
             )),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

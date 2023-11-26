@@ -15,7 +15,7 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
   int selectedIndex = 0;
-  List<Widget> screens = const [
+  List<Widget> screens = [
     HomeScreen(),
     SettingsScreen(),
   ];

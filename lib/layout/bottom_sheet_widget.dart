@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/moduls/widgets/custom_text_form_filed.dart';
+import 'package:intl/intl.dart';
+import 'package:todo_app/core/network_layer/firestore_utils.dart';
+import 'package:todo_app/model/task_model.dart';
 
-class BottomSheetWidget extends StatelessWidget {
+import '../moduls/widgets/custom_text_form_filed.dart';
+
+class BottomSheetWidget extends StatefulWidget {
   BottomSheetWidget({super.key});
 
+  @override
+  State<BottomSheetWidget> createState() => _BottomSheetWidgetState();
+}
+
+class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
   var formKey = GlobalKey<FormState>();
+  TextEditingController descriptionController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +25,8 @@ class BottomSheetWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Form(
+        key: formKey,
         child: Column(
-          key: formKey,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -28,19 +38,20 @@ class BottomSheetWidget extends StatelessWidget {
               ),
             ),
             CustomTextFormFiled(
-              title: "Enter your task title",
-              controller: titleController,
-              validator: (value) {
+              validator: (String? value) {
                 if (value == null || value.trim().isEmpty) {
-                  return "you must provide task";
-                } else if (value.length < 10) {
-                  return "you must provide task";
+                  return "you must have title";
+                } else if (value.length < 5) {
+                  return "must have more than 5 car";
                 } else {
                   return null;
                 }
               },
+              title: "Enter your task title",
+              controller: titleController,
             ),
             CustomTextFormFiled(
+                maxLines: 3,
                 title: "Enter your task description",
                 controller: descriptionController),
             Column(
@@ -57,7 +68,7 @@ class BottomSheetWidget extends StatelessWidget {
                     showCalendar(context);
                   },
                   child: Text(
-                    "5 oct 2023",
+                    DateFormat.yMMMd().format(selectedDate),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium!.copyWith(
                       color: theme.primaryColor,
@@ -67,9 +78,16 @@ class BottomSheetWidget extends StatelessWidget {
               ],
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (formKey.currentState!.validate()) {
-                  print(titleController.text);
+                  var model = TaskModel(
+                    title: titleController.text,
+                    description: descriptionController.text,
+                    dateTime: DateTime.now(),
+                    isDone: false,
+                  );
+                  await FirestoreUtils.addDataToFirestore(model);
+                  Navigator.pop(context);
                 }
               },
               child: Text(
@@ -85,8 +103,8 @@ class BottomSheetWidget extends StatelessWidget {
     );
   }
 
-  void showCalendar(context) {
-    showDatePicker(
+  void showCalendar(context) async {
+    var dateSelected = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
@@ -96,5 +114,8 @@ class BottomSheetWidget extends StatelessWidget {
         ),
       ),
     );
+    if (dateSelected == null) return null;
+    selectedDate = dateSelected;
+    setState(() {});
   }
 }

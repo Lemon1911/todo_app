@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todo_app/core/network_layer/firestore_utils.dart';
+import 'package:todo_app/model/task_model.dart';
 
 class TaskItemWidget extends StatelessWidget {
-  const TaskItemWidget({super.key});
+  const TaskItemWidget({super.key, required this.taskModel});
+
+  final TaskModel taskModel;
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +14,8 @@ class TaskItemWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       decoration: BoxDecoration(
-          color: Color(0xFFEC4B4B), borderRadius: BorderRadius.circular(15)),
+          color: const Color(0xFFEC4B4B),
+          borderRadius: BorderRadius.circular(15)),
       child: Slidable(
         startActionPane: ActionPane(
           extentRatio: 0.25,
@@ -20,7 +25,9 @@ class TaskItemWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               // An action can be bigger than the others.
               flex: 2,
-              onPressed: (context) => () {},
+              onPressed: (context) => () async {
+                await FirestoreUtils.deleteDataFromFirestore(taskModel);
+              },
               backgroundColor: Color(0xFFEC4B4B),
               foregroundColor: Colors.white,
               icon: Icons.delete,
@@ -44,11 +51,11 @@ class TaskItemWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Play basket ball",
+                    taskModel.title,
                     style: theme.textTheme.titleLarge,
                   ),
                   Text(
-                    "go play basket",
+                    taskModel.description,
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(
@@ -63,7 +70,7 @@ class TaskItemWidget extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      "10:00 AM",
+                      taskModel.dateTime.toString(),
                       style: theme.textTheme.bodySmall,
                     )
                   ]),
